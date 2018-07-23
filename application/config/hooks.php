@@ -13,9 +13,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   |
  */
 
-$hook['post_controller'] = array(
-    'class' => 'Setting_loader',
-    'function' => 'site_visitor',
-    'filename' => 'Setting_loader.php',
-    'filepath' => 'hooks'
-);
+//$hook['post_controller'] = array(
+//    'class' => 'Setting_loader',
+//    'function' => 'site_visitor',
+//    'filename' => 'Setting_loader.php',
+//    'filepath' => 'hooks'
+//);
