@@ -14,9 +14,13 @@ $(document).ready(function () {
     });
     $('.open-modal-tab').click(function (e) {
         var tab = e.target.hash;
-        $('li > a[href="' + tab + '"]').tab("show");
+        $('a[href="' + tab + '"]').tab("show");
     });
-
+    $('#LoginModal').on('show.bs.modal', function () {
+        $('#LoginModal').find('input').val('');
+        $('#LoginModal').find('.help-block').remove();
+        $('#LoginModal').find('.form-group').removeClass('has-error');
+    });
 
     $('#login-form').submit(function (e) {
         var _this = $(this);

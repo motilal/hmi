@@ -1,11 +1,11 @@
-<div class="modal fade signup" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade signup" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="LoginModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Close</span></button>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#signin" aria-controls="signin" role="tab" data-toggle="tab">Sign In</a></li>
-                    <li role="presentation"><a href="#signup" aria-controls="signup" role="tab" data-toggle="tab">Sign Up</a></li> 
+                    <li role="presentation"><a href="#signup" aria-controls="signup" role="tab" data-toggle="tab">Sign Up</a></li>  
                 </ul>
             </div>
             <div class="tab-content">
@@ -100,7 +100,8 @@
                     </div>
                 </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="forgot_password"><div class="modal-body">
+                <div role="tabpanel" class="tab-pane fade" id="forgot_password">
+                    <div class="modal-body">
                         <?php echo form_open('auth/register', array("id" => "forgot-password-form", "method" => "post")); ?>
                         <div class="row">
                             <div class="col-sm-12">
