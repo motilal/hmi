@@ -136,8 +136,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-
+        </div> 
         <div class="get_touch_bg">
             <div class="get_in_touch">
                 <div class="container">
@@ -291,9 +290,13 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="javascript:void(0)">Offers</a></li>
-                <li><a href="javascript:void(0)">Packages</a></li>
-                <li><a href="#" data-toggle="modal" data-target="#LoginModal" class="login_register_menu">Login/Sign Up</a></li>
+                <li><a href="javascript:void(0)">Packages</a></li> 
                 <li><a href="javascript:void(0)">Contact Us</a></li>
+                <?php if ($this->ion_auth->logged_in() && $this->ion_auth->is_general_user()) { ?>
+                    <li><a href="<?php echo site_url('auth/logout'); ?>">Logout</a></li>
+                <?php } else { ?>
+                    <li><a href="#" data-toggle="modal" data-target="#LoginModal" class="login_register_menu">Login/Sign Up</a></li>
+                <?php } ?>  
             </ul>
         </div>
         <div class="overlay"></div>  

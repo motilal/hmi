@@ -9,8 +9,8 @@ class Auth extends CI_Controller {
 
     function __construct() {
         parent::__construct();
-        $this->site_santry->redirect = "admin";
-        $this->site_santry->allow(array("login", "logout", "forgot_password", "reset_password", "two_step_auth_login"));
+        $this->site_santry->redirect = "/";
+        $this->site_santry->allow(array("login", "logout", "register", "forgot_password", "reset_password", "two_step_auth_login"));
         $this->load->library(array('ion_auth', 'form_validation'));
         $this->load->helper(array('language'));
         $this->layout->set_layout("admin/layout/layout_login");
@@ -19,11 +19,12 @@ class Auth extends CI_Controller {
     public function login() {
         $response = [];
         if ($this->input->post()) {
-            $this->form_validation->set_rules('identity', 'Email', 'required|valid_email');
+            $this->form_validation->set_rules('identity', 'Email', 'required|valid_email|callback__validate_username');
             $this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required');
             if ($this->form_validation->run() == TRUE) {
                 if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'))) {
                     $response['success'] = true;
+                    $response['msg'] = 'You have successfully login.';
                     $response['redirect'] = $this->input->post('request') ? $this->input->post('request') : site_url();
                 } else {
                     $response['error'] = $this->ion_auth->errors();
@@ -34,6 +35,54 @@ class Auth extends CI_Controller {
         }
         $this->output->set_content_type('application/json')->set_output(json_encode($response))->_display();
         exit();
+    }
+
+    public function register() {
+        $this->load->library('form_validation');
+        $response = [];
+        if ($this->form_validation->run('add_users') === TRUE) {
+            $username = NULL;
+            $password = $this->input->post('password');
+            $email = $this->input->post('email');
+            $additional_data = array(
+                'first_name' => $this->input->post('first_name'),
+                'last_name' => $this->input->post('last_name'),
+                'phone' => $this->input->post('phone'),
+                'state' => $this->input->post('state'),
+                'city' => $this->input->post('city') 
+            ); 
+            $additional_data['slug'] = create_unique_slug($additional_data['first_name'] . ' ' . $additional_data['last_name'], 'users', 'slug');
+            $group = array('2'); 
+            if ($this->ion_auth->register($username, $password, $email, $additional_data, $group)) {
+                $response['success'] = true;
+                $response['msg'] = 'You have successfully register.We have set you a link on your email please verify.';
+            } else {
+                $response['error'] = $this->ion_auth->errors();
+            }
+        } else {
+            $response['validation_error'] = $this->form_validation->error_array();
+        }
+        $this->output->set_content_type('application/json')->set_output(json_encode($response))->_display();
+        exit();
+    }
+
+    function _validate_email($email) {
+        if ($email != "" && $this->ion_auth->email_check($email)) {
+            $this->form_validation->set_message('_validate_email', 'The User %s already exist.');
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    function _validate_username($str) {
+        $user = $this->db->select('users.id')->join('users_groups', 'users_groups.user_id=users.id', 'INNER')->where(array('email' => $str, 'group_id' => 2))->get('users');
+        if ($user->num_rows() >= 1) {
+            return TRUE;
+        } else {
+            $this->form_validation->set_message('_validate_username', 'Incorrect Login.');
+            return FALSE;
+        }
     }
 
     public function two_step_auth_login($enc_email = "") {
@@ -134,7 +183,7 @@ class Auth extends CI_Controller {
 
     public function logout() {
         $logout = $this->ion_auth->logout();
-        redirect('admin', 'refresh');
+        redirect('/', 'refresh');
     }
 
 }

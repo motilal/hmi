@@ -203,7 +203,7 @@ $config = array(
         array(
             'field' => 'last_name',
             'label' => 'Last Name',
-            'rules' => "trim|max_length[50]"
+            'rules' => "trim|required|max_length[50]"
         ),
         array(
             'field' => 'email',
@@ -213,7 +213,7 @@ $config = array(
         array(
             'field' => 'phone',
             'label' => 'Phone',
-            'rules' => "trim|max_length[20]"
+            'rules' => "trim|required|max_length[20]"
         ),
         array(
             'field' => 'password',
@@ -223,7 +223,17 @@ $config = array(
         array(
             'field' => 'cpassword',
             'label' => 'Confrim Password',
-            'rules' => "trim|matches[password]"
+            'rules' => "trim|required|matches[password]"
+        ),
+        array(
+            'field' => 'city',
+            'label' => 'City',
+            'rules' => "trim|required|max_length[50]"
+        ),
+        array(
+            'field' => 'state',
+            'label' => 'State',
+            'rules' => "trim|required|max_length[50]"
         )
     ),
     'edit_users' => array(

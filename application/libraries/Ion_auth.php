@@ -204,7 +204,7 @@ class Ion_auth {
                 $message = $this->load->view($this->config->item('email_templates', 'ion_auth') . $this->config->item('email_forgot_password_complete', 'ion_auth'), $data, true);
                 $mail_smtp = $this->config->item("mail_smtp");
                 $this->email->initialize($mail_smtp);
-                $this->email->clear(); 
+                $this->email->clear();
                 $this->email->from($this->config->item('admin_email', 'ion_auth'), $this->config->item('site_title', 'ion_auth'));
                 $this->email->to($profile->email);
                 $this->email->subject($this->config->item('site_title', 'ion_auth') . ' - ' . $this->lang->line('email_new_password_subject'));
@@ -439,6 +439,20 @@ class Ion_auth {
         $admin_group = $this->config->item('subadmin_group', 'ion_auth');
 
         return $this->in_group($admin_group, $id);
+    }
+
+    /**
+     * @param int|string|bool $id
+     *
+     * @return bool Whether the user is an administrator
+     * @author Ben Edmunds
+     */
+    public function is_general_user($id = FALSE) {
+        $this->ion_auth_model->trigger_events('is_general_user');
+
+        $default_group = $this->config->item('default_group', 'ion_auth');
+
+        return $this->in_group($default_group, $id);
     }
 
     /**

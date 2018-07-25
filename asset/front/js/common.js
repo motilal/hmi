@@ -42,9 +42,45 @@ $(document).ready(function () {
                         elem.closest('.form-group').append(error);
                         elem.closest('.form-group').addClass('has-error');
                     });
-                } else if (res.success && res.msg && res.data) {
+                } else if (res.success && res.msg) {
                     showMessage('success', {message: res.msg});
-                    $('#modal-manage').modal('hide');
+                    window.location = res.redirect;
+                } else if (res.error) {
+                    showMessage('error', {message: res.error});
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                _this.find("[type='submit']").prop('disabled', false);
+                showMessage('error', 'Internal error: ' + jqXHR.responseText);
+            }
+        });
+    });
+
+    $('#register-form').submit(function (e) {
+        var _this = $(this);
+        _this.find("[type='submit']").prop('disabled', true);
+        $('.form-group .help-block').remove();
+        $('.form-group').removeClass('has-error');
+        e.preventDefault();
+        $.ajax({
+            url: _this.attr('action'),
+            type: "POST",
+            dataType: 'JSON',
+            data: _this.serialize(),
+            success: function (res)
+            {
+                _this.find("[type='submit']").prop('disabled', false);
+                if (res.validation_error) {
+                    $.each(res.validation_error, function (index, value) {
+                        var elem = _this.find('[name="' + index + '"]');
+                        var error = '<div class="help-block">' + value + '</div>';
+                        elem.closest('.form-group').append(error);
+                        elem.closest('.form-group').addClass('has-error');
+                    });
+                } else if (res.success && res.msg) { 
+                    $('#LoginModal').modal('hide');
+                    $('#register-form')[0].reset();
+                    showMessage('success', {message: res.msg});
                 } else if (res.error) {
                     showMessage('error', {message: res.error});
                 }

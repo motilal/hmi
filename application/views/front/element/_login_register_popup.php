@@ -40,13 +40,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>First Name*</label> 
-                                    <?php echo form_input("first_name", set_value("first_name"), "id='first_name' class='form-control' required"); ?> 
+                                    <?php echo form_input("first_name", set_value("first_name"), "id='first_name' class='form-control'"); ?> 
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Last Name*</label>
-                                    <?php echo form_input("last_name", set_value("last_name"), "id='last_name' class='form-control' required"); ?> 
+                                    <?php echo form_input("last_name", set_value("last_name"), "id='last_name' class='form-control'"); ?> 
                                 </div>
                             </div>
                         </div>
@@ -54,13 +54,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Email ID*</label> 
-                                    <?php echo form_input("email", set_value("email"), "id='email' class='form-control' required"); ?> 
+                                    <?php echo form_input("email", set_value("email"), "id='email' class='form-control'"); ?> 
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Phome No*</label>
-                                    <?php echo form_input("phone", set_value("phone"), "id='phone' class='form-control' required"); ?> 
+                                    <?php echo form_input("phone", set_value("phone"), "id='phone' class='form-control'"); ?> 
                                 </div>
                             </div>
                         </div>
@@ -68,13 +68,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Password*</label>
-                                    <?php echo form_password("password", set_value("password"), "class='form-control' required"); ?>
+                                    <?php echo form_password("password", set_value("password"), "class='form-control'"); ?>
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>Confirm Password*</label>
-                                    <?php echo form_password("cpassword", set_value("cpassword"), "class='form-control' required"); ?>
+                                    <?php echo form_password("cpassword", set_value("cpassword"), "class='form-control'"); ?>
                                 </div>
                             </div>
                         </div>
@@ -82,13 +82,13 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>State*</label>
-                                    <?php echo form_input("state", set_value("state"), "id='state' class='form-control' required"); ?> 
+                                    <?php echo form_input("state", set_value("state"), "id='state' class='form-control'"); ?> 
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label>City*</label>
-                                    <?php echo form_input("city", set_value("city"), "id='city' class='form-control' required"); ?> 
+                                    <?php echo form_input("city", set_value("city"), "id='city' class='form-control'"); ?> 
                                 </div>
                             </div>
                         </div> 
