@@ -389,6 +389,28 @@ $config = array(
             'label' => 'Image',
             'rules' => "trim|required|max_length[255]"
         )
+    ),
+    'contact' => array(
+        array(
+            'field' => 'name',
+            'label' => 'Name',
+            'rules' => "trim|required|max_length[255]"
+        ),
+        array(
+            'field' => 'email',
+            'label' => 'Email',
+            'rules' => "trim|required|valid_email|max_length[100]"
+        ),
+        array(
+            'field' => 'subject',
+            'label' => 'Subject',
+            'rules' => "trim|required|max_length[255]"
+        ),
+        array(
+            'field' => 'message',
+            'label' => 'Message',
+            'rules' => "trim|required|max_length[1000]"
+        )
     )
 );
 $config['error_prefix'] = '<div class="help-block">';

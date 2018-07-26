@@ -1603,7 +1603,7 @@ pre code {
     width: 970px;
   }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1230px) {
   .container {
     width: 1200px;
   }

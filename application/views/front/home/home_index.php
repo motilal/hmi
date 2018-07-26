@@ -63,32 +63,36 @@
             <div class="heading"><h2><span>G</span> et in Touch</h2></div>
             <div class="contact_form"> 
                 <div class="touch_form">
-                    <form>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="*Name">
-                                </div></div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="*Email">
-                                </div>
+                    <?php echo form_open('contact', array("id" => "contact-form", "method" => "post")); ?>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group"> 
+                                <?php echo form_input("name", set_value("name"), "class='form-control' placeholder='*Name'"); ?> 
+                            </div></div>
+                        <div class="col-sm-6">
+                            <div class="form-group"> 
+                                <?php echo form_input("email", set_value("email"), "class='form-control' placeholder='*Email'"); ?> 
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="*Subject">
-                                </div></div></div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <textarea class="form-control" placeholder="*Message"></textarea>
-                                </div></div></div>
-                        <div class="send_btn">
-                            <button type="button" class="btn-primary" value="Send">Send</button>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group"> 
+                                <?php echo form_input("subject", set_value("subject"), "class='form-control' placeholder='*Subject'"); ?> 
+                            </div>
                         </div>
-                    </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group"> 
+                                <?php echo form_textarea("message", set_value("message"), "class='form-control' placeholder='*Message'"); ?> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="send_btn">
+                        <button type="submit" class="btn-primary" value="Send">Send</button>
+                    </div>
+                    <?php echo form_close(); ?>
                 </div>
 
                 <div class="contact_us">

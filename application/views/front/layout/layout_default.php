@@ -44,39 +44,49 @@
         </script>
     </head>
     <body> 
+        <?php $segment1 = $this->uri->segment(1); ?>
         <div class="top_banner"> 
             <?php echo $this->layout->element('front/element/_header'); ?>
-            <div class="banner">
-                <div class="banner_content">
-                    <div class="welcome_content">
-                        <h1>Welcome To HMI</h1>
-                        <p>We are here to give you the best holiday <br />
-                            experiences while you are in dubai.</p>
-                    </div>
-                    <div class="search_filter">
-                        <ul>
-                            <li class="filter_box"><div class="country"><select class="form-control">
-                                        <option>India</option>
-                                        <option>India</option>
-                                    </select></div></li>
-                            <li class="filter_box"><div><select class="form-control">
-                                        <option>Travel type</option>
-                                        <option>Travel type</option>
-                                    </select></div></li>
-                            <li class="filter_category"><div><select class="form-control">
-                                        <option>Categories</option>
-                                        <option>Categories</option>
-                                    </select></div></li>
-                            <li class="search_btn">
-                                <div classs="search_btn">
-                                    <button type="button" class="btn-default" value="Search">Search</button>
-                                </div>
-                            </li>
+            <?php if ($segment1 == 'home' || $segment1 == "") { ?>
+                <div class="banner">
+                    <div class="banner_content">
+                        <div class="welcome_content">
+                            <h1>Welcome To HMI</h1>
+                            <p>We are here to give you the best holiday <br />
+                                experiences while you are in dubai.</p>
+                        </div>
+                        <div class="search_filter">
+                            <ul>
+                                <li class="filter_box"><div class="country"><select class="form-control">
+                                            <option>India</option>
+                                            <option>India</option>
+                                        </select></div></li>
+                                <li class="filter_box"><div><select class="form-control">
+                                            <option>Travel type</option>
+                                            <option>Travel type</option>
+                                        </select></div></li>
+                                <li class="filter_category"><div><select class="form-control">
+                                            <option>Categories</option>
+                                            <option>Categories</option>
+                                        </select></div></li>
+                                <li class="search_btn">
+                                    <div classs="search_btn">
+                                        <button type="button" class="btn-default" value="Search">Search</button>
+                                    </div>
+                                </li>
 
-                        </ul>
-                    </div>
-                </div>	
-            </div>
+                            </ul>
+                        </div>
+                    </div>	
+                </div>
+            <?php } else if ($segment1 == 'contact') { ?>
+                <div class="banner contact_banner">
+                    <div class="contact_text">
+                        <h2>CONTACT US</h2>
+                        <span>GET IN TOUCH</span>
+                    </div>	
+                </div>
+            <?php } ?>
         </div>
 
         <?php echo $content_for_layout; ?>  

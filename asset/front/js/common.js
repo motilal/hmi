@@ -128,6 +128,41 @@ $(document).ready(function () {
         });
     });
 
+    $('#contact-form').submit(function (e) {
+        var _this = $(this);
+        _this.find("[type='submit']").prop('disabled', true);
+        $('.form-group .help-block').remove();
+        $('.form-group').removeClass('has-error');
+        e.preventDefault();
+        $.ajax({
+            url: _this.attr('action'),
+            type: "POST",
+            dataType: 'JSON',
+            data: _this.serialize(),
+            success: function (res)
+            {
+                _this.find("[type='submit']").prop('disabled', false);
+                if (res.validation_error) {
+                    $.each(res.validation_error, function (index, value) {
+                        var elem = _this.find('[name="' + index + '"]');
+                        var error = '<div class="help-block">' + value + '</div>';
+                        elem.closest('.form-group').append(error);
+                        elem.closest('.form-group').addClass('has-error');
+                    });
+                } else if (res.success && res.msg) {
+                    $('#contact-form')[0].reset();
+                    showMessage('success', {message: res.msg});
+                } else if (res.error) {
+                    showMessage('error', {message: res.error});
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                _this.find("[type='submit']").prop('disabled', false);
+                showMessage('error', 'Internal error: ' + jqXHR.responseText);
+            }
+        });
+    });
+
     if (SUCCESS_NOTIFICATION != "" && SUCCESS_NOTIFICATION != null) {
         showMessage('success', {message: SUCCESS_NOTIFICATION});
     } else if (ERROR_NOTIFICATION != "" && ERROR_NOTIFICATION != null) {
