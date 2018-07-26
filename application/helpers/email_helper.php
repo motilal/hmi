@@ -22,7 +22,7 @@ if (!function_exists("sendmail")) {
         $mail_data = $CI->email_template->getBySlag($mail_key);
         if (!empty($mail_data)) {
             $subject = str_replace($replace_from, $replace_to, $mail_data->subject);
-            $message = str_replace($replace_from, $replace_to, $mail_data->body);
+            $message = str_replace($replace_from, $replace_to, $mail_data->body); 
             $CI->load->library('email');
             $mail_smtp = $CI->config->item("mail_smtp");
             $CI->email->initialize($mail_smtp);

@@ -102,12 +102,12 @@
 
                 <div role="tabpanel" class="tab-pane fade" id="forgot_password">
                     <div class="modal-body">
-                        <?php echo form_open('auth/register', array("id" => "forgot-password-form", "method" => "post")); ?>
+                        <?php echo form_open('auth/forgot_password', array("id" => "forgot-password-form", "method" => "post")); ?>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label>Email ID</label>
-                                    <?php echo form_input("email", set_value("email"), "class='form-control' required"); ?> 
+                                    <?php echo form_input("email", set_value("email"), "class='form-control'"); ?> 
                                 </div>
                             </div> 
                         </div>

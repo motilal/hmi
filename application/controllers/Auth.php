@@ -49,11 +49,17 @@ class Auth extends CI_Controller {
                 'last_name' => $this->input->post('last_name'),
                 'phone' => $this->input->post('phone'),
                 'state' => $this->input->post('state'),
-                'city' => $this->input->post('city') 
-            ); 
+                'city' => $this->input->post('city')
+            );
             $additional_data['slug'] = create_unique_slug($additional_data['first_name'] . ' ' . $additional_data['last_name'], 'users', 'slug');
-            $group = array('2'); 
-            if ($this->ion_auth->register($username, $password, $email, $additional_data, $group)) {
+            $group = array('2');
+            $register = $this->ion_auth->register($username, $password, $email, $additional_data, $group);
+            /* [identity] => motis@gmail.com
+              [id] => 19
+              [email] => motis@gmail.com
+              [activation] => 86308d1789a6257527669140efba0698193c2458 */
+            if (isset($register['id']) && $register['activation']) {
+                $this->emailtouser($register, $additional_data);
                 $response['success'] = true;
                 $response['msg'] = 'You have successfully register.We have set you a link on your email please verify.';
             } else {
@@ -66,6 +72,17 @@ class Auth extends CI_Controller {
         exit();
     }
 
+    function emailtouser($register, $additional_data) {
+        if (!empty($register)) {
+            $code = $register['activation'];
+            $email = $register['email'];
+            $this->load->helper('email_helper');
+            $replaceFrom = array('{user}', '{link}');
+            $replaceTo = array($additional_data['first_name'], site_url("auth/activate/{$register['id']}/$code"));
+            sendMailByTemplate('user-registeration', $replaceFrom, $replaceTo, $email);
+        }
+    }
+
     function _validate_email($email) {
         if ($email != "" && $this->ion_auth->email_check($email)) {
             $this->form_validation->set_message('_validate_email', 'The User %s already exist.');
@@ -76,38 +93,36 @@ class Auth extends CI_Controller {
     }
 
     function _validate_username($str) {
-        $user = $this->db->select('users.id')->join('users_groups', 'users_groups.user_id=users.id', 'INNER')->where(array('email' => $str, 'group_id' => 2))->get('users');
-        if ($user->num_rows() >= 1) {
-            return TRUE;
-        } else {
-            $this->form_validation->set_message('_validate_username', 'Incorrect Login.');
-            return FALSE;
+        if ($str != "") {
+            $user = $this->db->select('users.id')->join('users_groups', 'users_groups.user_id=users.id', 'INNER')->where(array('email' => $str, 'group_id' => 2))->get('users');
+            if ($user->num_rows() >= 1) {
+                return TRUE;
+            } else {
+                $this->form_validation->set_message('_validate_username', 'This email is not recognize.');
+                return FALSE;
+            }
         }
     }
 
-    public function two_step_auth_login($enc_email = "") {
-        if (empty($enc_email)) {
-            show_404();
+    /**
+     * Activate the user
+     *
+     * @param int         $id   The user ID
+     * @param string|bool $code The activation code
+     */
+    public function activate($id, $code = FALSE) {
+        if ($code !== FALSE) {
+            $activation = $this->ion_auth->activate($id, $code);
+        } else if ($this->ion_auth->is_admin()) {
+            $activation = $this->ion_auth->activate($id);
         }
-        $email = base64_decode($enc_email);
-        $user = $this->db->where(array('email' => $email, 'authentication_code IS NOT NULL' => NULL))->get('users');
-        if ($user->num_rows() > 0) {
-            $this->form_validation->set_rules('code', 'Code', "required|callback__isValidateAuthCode[$email]");
-            if ($this->form_validation->run() == false) {
-                $this->viewData['title'] = "Login Authentication";
-                $this->layout->view("admin/auth/two_step_auth_login", $this->viewData);
-            } else {
-                if ($this->ion_auth->login($email, $this->session->userdata('_auth_password'), FALSE, FALSE)) {
-                    $this->db->where('email', $email)->update('users', array('authentication_code' => NULL));
-                    updateSubadminPermission();
-                    redirect("/admin/dashboard/?auth=verify");
-                } else {
-                    $this->session->set_flashdata('error', $this->ion_auth->errors());
-                    redirect('admin');
-                }
-            }
+        if ($activation) {
+            $this->session->set_flashdata('success', $this->ion_auth->messages());
+            redirect("/", 'refresh');
         } else {
-            redirect("/");
+            // redirect them to the forgot password page
+            $this->session->set_flashdata('error', $this->ion_auth->errors());
+            redirect("/", 'refresh');
         }
     }
 
@@ -122,29 +137,33 @@ class Auth extends CI_Controller {
     }
 
     public function forgot_password() {
-        if ($this->ion_auth->is_admin()) {
-            redirect('admin/dashboard');
+        if ($this->ion_auth->is_general_user()) {
+            return;
         }
-        $this->form_validation->set_rules('email', 'Email Address', 'required');
+        $response = [];
+        $this->form_validation->set_rules('email', 'Email Address', 'required|callback__validate_username');
         if ($this->form_validation->run() == false) {
             $this->data['email'] = array(
                 'name' => 'email',
                 'id' => 'email'
             );
-            $this->viewData['validation_message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-            $this->viewData['title'] = "Admin Forgot Password";
-            $this->layout->view("admin/auth/forgot_password", $this->viewData);
+            $response['validation_error'] = $this->form_validation->error_array();
         } else {
-            $forgotten = $this->ion_auth->forgotten_password($this->input->post('email'));
-            if ($forgotten) {
+            $forgotten = $this->ion_auth->forgotten_password($this->input->post('email'), $group = 2);
+            /*
+              ([identity] => motisqss@gmail.com
+              [forgotten_password_code] => 5GpNlklrYTDoi9PRz4DDIe6c5ff7ed27b7c53960 )
+             */
+            if (!empty($forgotten['forgotten_password_code'])) {
                 $this->forgotPasswordEmail($forgotten);
-                $this->session->set_flashdata('success', $this->ion_auth->messages());
-                redirect("admin");
+                $response['success'] = true;
+                $response['msg'] = $this->ion_auth->messages();
             } else {
-                $this->session->set_flashdata('error', $this->ion_auth->errors());
-                redirect("admin/auth/forgot_password", 'refresh');
+                $response['error'] = $this->ion_auth->errors();
             }
         }
+        $this->output->set_content_type('application/json')->set_output(json_encode($response))->_display();
+        exit();
     }
 
     private function forgotPasswordEmail($forgotten) {
@@ -153,8 +172,8 @@ class Auth extends CI_Controller {
             $code = $forgotten['forgotten_password_code'];
             $this->load->helper('email_helper');
             $replaceFrom = array('{name}', '{link}');
-            $replaceTo = array($email, site_url("admin/auth/reset_password/$code"));
-            sendMailByTemplate('admin-forgot-password', $replaceFrom, $replaceTo, $email);
+            $replaceTo = array($email, site_url("auth/reset_password/$code"));
+            sendMailByTemplate('user-forgot-password', $replaceFrom, $replaceTo, $email);
         }
     }
 
@@ -163,10 +182,10 @@ class Auth extends CI_Controller {
         if ($reset) {
             $this->resetPasswordEmail($reset);
             $this->session->set_flashdata('success', $this->ion_auth->messages());
-            redirect("admin", 'refresh');
+            redirect("/", 'refresh');
         } else {
             $this->session->set_flashdata('error', $this->ion_auth->errors());
-            redirect("admin/auth/forgot_password", 'refresh');
+            redirect("/", 'refresh');
         }
     }
 
@@ -177,7 +196,7 @@ class Auth extends CI_Controller {
             $this->load->helper('email_helper');
             $replaceFrom = array('{name}', '{password}');
             $replaceTo = array($email, $password);
-            sendMailByTemplate('admin-reset-password', $replaceFrom, $replaceTo, $email);
+            sendMailByTemplate('user-password-reset', $replaceFrom, $replaceTo, $email);
         }
     }
 

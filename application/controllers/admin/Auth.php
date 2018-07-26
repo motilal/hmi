@@ -21,7 +21,7 @@ class Auth extends CI_Controller {
             redirect('admin/dashboard');
         }
         if ($this->input->post()) {
-            $this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'required');
+            $this->form_validation->set_rules('identity', 'Email', 'required|valid_email|callback__validate_username');
             $this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required');
 
             if ($this->form_validation->run() == TRUE) {
@@ -75,11 +75,23 @@ class Auth extends CI_Controller {
         }
     }
 
+    function _validate_username($str) {
+        if ($str != "") {
+            $user = $this->db->select('users.id')->join('users_groups', 'users_groups.user_id=users.id', 'INNER')->where(array('email' => $str, 'group_id' => 1))->get('users');
+            if ($user->num_rows() >= 1) {
+                return TRUE;
+            } else {
+                $this->form_validation->set_message('_validate_username', 'This email is not recognize.');
+                return FALSE;
+            }
+        }
+    }
+
     public function forgot_password() {
         if ($this->ion_auth->is_admin()) {
             redirect('admin/dashboard');
         }
-        $this->form_validation->set_rules('email', 'Email Address', 'required');
+        $this->form_validation->set_rules('email', 'Email Address', 'required|callback__validate_username');
         if ($this->form_validation->run() == false) {
             $this->data['email'] = array(
                 'name' => 'email',
@@ -134,7 +146,7 @@ class Auth extends CI_Controller {
             sendMailByTemplate('admin-reset-password', $replaceFrom, $replaceTo, $email);
         }
     }
- 
+
     public function logout() {
         $logout = $this->ion_auth->logout();
         redirect('admin', 'refresh');
