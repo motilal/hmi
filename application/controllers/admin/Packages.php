@@ -32,7 +32,7 @@ class Packages extends CI_Controller {
             $result = $this->package->get_list($condition, $params->limit, $params->order, TRUE);
             if ($this->input->get('download') == 'report') {
                 $this->acl->has_permission('package-export');
-                $this->generatePdf($result->data->result());
+                $this->generateCsv($result->data->result());
             }
             if ($result->data->num_rows() > 0) {
                 $response['data'] = $this->showTableData($result->data->result());
@@ -309,7 +309,7 @@ class Packages extends CI_Controller {
         $this->output->set_content_type('application/json')->set_output(json_encode($response));
     }
 
-    private function generatePdf($result) {
+    private function generateCsv($result) {
         $this->load->helper('csv');
         $csv_array[] = ["name" => 'Name',
             "category" => 'Category',

@@ -101,6 +101,9 @@
                 <li><a href="javascript:void(0)">Offers</a></li>
                 <li><a href="javascript:void(0)">Packages</a></li> 
                 <li><a href="<?php echo site_url('contact'); ?>">Contact Us</a></li> 
+                <?php if ($this->ion_auth->logged_in() && $this->ion_auth->is_general_user()) { ?>
+                    <li><a href="<?php echo site_url('auth/logout'); ?>">Logout</a></li>
+                <?php } ?>
             </ul>
         </div>
         <div class="overlay"></div>  

@@ -183,6 +183,14 @@ $user_permissions = $this->session->userdata('_subadmin_module_permissions');
                 </li>
             <?php } ?>  
 
+            <?php if (is_allow_module('contact')) { ?>    
+                <li class="<?php echo $segment_cntr == 'contacts' ? 'active' : ''; ?>">
+                    <a href="<?php echo site_url('admin/contacts'); ?>">
+                        <i class="fa fa-phone"></i> <span>Contacts</span> 
+                    </a>
+                </li>
+            <?php } ?>
+
             <li class="treeview <?php echo in_array($segment_cntr, array('settings', 'logs')) ? 'active menu-open' : ''; ?>">
                 <a href="#">
                     <i class="fa fa-gear"></i>
